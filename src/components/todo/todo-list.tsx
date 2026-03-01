@@ -1,10 +1,8 @@
 import { Ellipsis } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useHotkeySequence } from "@tanstack/react-hotkeys";
 import * as React from "react";
 
-import { useDeleteTodoItem, useTodoList } from "./hooks";
-import { TodoForm } from "./todo-form";
-import type { Todo } from "./types";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -38,7 +36,16 @@ import {
   ItemDescription,
   ItemTitle,
 } from "@/components/ui/item";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
+import { Kbd, KbdGroup } from "../ui/kbd";
+import { useDeleteTodoItem, useTodoList } from "./hooks";
+import { TodoForm } from "./todo-form";
+import type { Todo } from "./types";
 
 export function TodoList() {
   const [createOpen, setCreateOpen] = React.useState(false);
@@ -46,6 +53,10 @@ export function TodoList() {
   const [editingTodo, setEditingTodo] = React.useState<Todo | null>(null);
   const { data: todoList, isLoading } = useTodoList();
   const deleteTodo = useDeleteTodoItem();
+
+  useHotkeySequence(["C", "T"], () => {
+    setCreateOpen(true);
+  });
 
   const handleEditClick = (todo: Todo) => {
     setEditingTodo(todo);
@@ -69,7 +80,18 @@ export function TodoList() {
         <CardAction>
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">Create Task</Button>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button variant="outline">Create Task</Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <KbdGroup>
+                    <Kbd>C</Kbd>
+                    <span>+</span>
+                    <Kbd>T</Kbd>
+                  </KbdGroup>
+                </TooltipContent>
+              </Tooltip>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
