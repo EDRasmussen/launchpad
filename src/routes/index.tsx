@@ -1,67 +1,22 @@
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { PersonalCalendar } from '@/components/personal-calendar'
 import {
     Card,
-    CardAction,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
 import { createFileRoute } from '@tanstack/react-router'
-import React from 'react'
 
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
-    const [date, setDate] = React.useState<Date | undefined>(new Date())
 
     return (
         <div className="min-h-screen container mx-auto py-32 space-y-6">
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
-                Good Evening!
-            </h1>
-
             <div className="flex flex-row w-full gap-6">
                 <div className="basis-1/3">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Calendar</CardTitle>
-                            <CardDescription>Today's events</CardDescription>
-                            <CardAction>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="ml-2 text-green-500"
-                                >
-                                    Private
-                                </Button>
-                            </CardAction>
-                        </CardHeader>
-                        <CardContent>
-                            <Calendar
-                                mode="single"
-                                weekStartsOn={1}
-                                selected={date}
-                                onSelect={setDate}
-                                className="border w-full"
-                                captionLayout="dropdown"
-                            />
-                        </CardContent>
-                        <CardFooter>
-                            <div className="space-y-1 text-sm">
-                                <CardTitle>2026-02-26 - Week 9 - 11:13</CardTitle>
-                                <div className="text-muted-foreground">
-                                    09:30 - Standup - Microsoft Teams Meeting
-                                </div>
-                                <div className="text-muted-foreground">
-                                    10:30 - Meeting - Trommesalen 5
-                                </div>
-                                <div>12:30 - Lunch with John - Restaurant</div>
-                            </div>
-                        </CardFooter>
-                    </Card>
+                    <PersonalCalendar />
                 </div>
                 <div className="basis-2/3">
                     <Card>
