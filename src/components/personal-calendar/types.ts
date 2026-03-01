@@ -1,15 +1,15 @@
 export interface CalendarEvent {
-  summary: string
-  start: Date
-  end: Date
-  location: string | null
-  description: string | null
+  summary: string;
+  start: Date;
+  end: Date;
+  location: string | null;
+  description: string | null;
 }
 
 export interface EventListProps {
-  events: CalendarEvent[]
+  events: Array<CalendarEvent>;
 }
 
 export interface EventEntryProps {
-  event: CalendarEvent
+  event: CalendarEvent;
 }
