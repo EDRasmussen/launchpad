@@ -79,20 +79,20 @@ export function TodoList() {
         <CardDescription>Your currently active tasks</CardDescription>
         <CardAction>
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-            <DialogTrigger asChild>
-              <Tooltip>
-                <TooltipTrigger>
+            <Tooltip>
+              <DialogTrigger asChild>
+                <TooltipTrigger asChild>
                   <Button variant="outline">Create Task</Button>
                 </TooltipTrigger>
-                <TooltipContent>
-                  <KbdGroup>
-                    <Kbd>C</Kbd>
-                    <span>+</span>
-                    <Kbd>T</Kbd>
-                  </KbdGroup>
-                </TooltipContent>
-              </Tooltip>
-            </DialogTrigger>
+              </DialogTrigger>
+              <TooltipContent>
+                <KbdGroup>
+                  <Kbd>C</Kbd>
+                  <span>+</span>
+                  <Kbd>T</Kbd>
+                </KbdGroup>
+              </TooltipContent>
+            </Tooltip>
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
                 <DialogTitle>Create Task</DialogTitle>
@@ -117,7 +117,7 @@ export function TodoList() {
         {isLoading && <div>Loading tasks...</div>}
         {!isLoading && todoList?.length === 0 && <div>No tasks</div>}
         {!isLoading &&
-          todoList?.map(todo => (
+          todoList?.map((todo: Todo) => (
             <Item key={todo.id} variant="outline">
               <ItemContent>
                 <ItemTitle>{todo.title}</ItemTitle>
