@@ -1,20 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
 
+import { deleteTodoSchema, insertTodoSchema, updateTodoSchema } from "./schema";
 import { db } from "@/db";
 import { todoTable } from "@/db/schema";
 
-import { insertTodoSchema, updateTodoSchema } from "./schema";
 
 export const getTodoList = createServerFn({ method: "GET" }).handler(
   async () => {
-    try {
-      const todos = await db.select().from(todoTable);
-      return todos ?? [];
-    } catch (error) {
-      console.error("Error fetching todos:", error);
-      return [];
-    }
+    const todos = await db.select().from(todoTable);
+    return todos;
   }
 );
 
@@ -22,32 +17,28 @@ export const createTodoItem = createServerFn({ method: "POST" })
   .inputValidator(insertTodoSchema)
   .handler(async ctx => {
     const data = insertTodoSchema.parse(ctx.data);
-
-    try {
-      await db.insert(todoTable).values(data);
-      return { success: true };
-    } catch (error) {
-      console.error("Error adding todo:", error);
-      return { success: false };
-    }
+    await db.insert(todoTable).values(data);
+    return { success: true };
   });
 
 export const updateTodoItem = createServerFn({ method: "POST" })
   .inputValidator(updateTodoSchema)
   .handler(async ctx => {
-    const data = insertTodoSchema.parse(ctx.data);
+    const data = updateTodoSchema.parse(ctx.data);
+    await db
+      .update(todoTable)
+      .set({
+        title: data.title,
+        description: data.description,
+      })
+      .where(eq(todoTable.id, data.id));
+    return { success: true };
+  });
 
-    try {
-      await db
-        .update(todoTable)
-        .set({
-          title: data.title,
-          description: data.description,
-        })
-        .where(eq(todoTable.id, todoTable.id));
-      return { success: true };
-    } catch (error) {
-      console.error("Error adding todo:", error);
-      return { success: false };
-    }
+export const deleteTodoItem = createServerFn({ method: "POST" })
+  .inputValidator(deleteTodoSchema)
+  .handler(async ctx => {
+    const data = deleteTodoSchema.parse(ctx.data);
+    await db.delete(todoTable).where(eq(todoTable.id, data.id));
+    return { success: true };
   });

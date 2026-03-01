@@ -3,6 +3,9 @@
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 
+import { useAddTodoItem, useUpdateTodoItem } from "./hooks";
+import { todoFormSchema } from "./schema";
+import type { TodoFormProps } from "./types";
 import {
   Field,
   FieldDescription,
@@ -18,31 +21,42 @@ import {
   InputGroupTextarea,
 } from "@/components/ui/input-group";
 
-import { useAddTodoItem } from "./hooks";
-import { todoFormSchema } from "./schema";
 
-export function TodoForm({ onSuccess }: TodoFormProps) {
+export function TodoForm({ todo, onSuccess }: TodoFormProps) {
   const addTodo = useAddTodoItem();
+  const updateTodo = useUpdateTodoItem();
+
   const form = useForm({
     defaultValues: {
-      title: "",
-      description: "",
+      title: todo?.title ?? "",
+      description: todo?.description ?? "",
     },
     validators: {
       onSubmit: todoFormSchema,
     },
     onSubmit: async ({ value }) => {
       try {
-        await addTodo.mutateAsync({
-          title: value.title,
-          description: value.description,
-        });
-        toast("Task created");
-        form.reset();
+        if (todo) {
+          await updateTodo.mutateAsync({
+            id: todo.id,
+            title: value.title.trim(),
+            description: value.description.trim(),
+          });
+          toast("Task updated");
+        } else {
+          await addTodo.mutateAsync({
+            title: value.title.trim(),
+            description: value.description.trim(),
+          });
+          toast("Task created");
+          form.reset();
+        }
         onSuccess?.();
       } catch {
         toast(
-          "Something went wrong while processing your task creation. Please try again later"
+          todo
+            ? "Something went wrong while updating your task. Please try again later"
+            : "Something went wrong while processing your task creation. Please try again later"
         );
       }
     },

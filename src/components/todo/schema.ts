@@ -11,6 +11,10 @@ export const updateTodoSchema = z.object({
   description: z.string().max(150).optional(),
 });
 
+export const deleteTodoSchema = z.object({
+  id: z.number(),
+});
+
 export const todoFormSchema = z.object({
   title: z
     .string()

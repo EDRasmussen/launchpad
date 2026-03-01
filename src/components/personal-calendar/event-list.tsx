@@ -1,11 +1,11 @@
+import { formatEventDescription, isEventCanceled } from "./utils";
+import type { EventEntryProps, EventListProps } from "./types";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
-import type { EventEntryProps, EventListProps } from "./types";
-import { formatEventDescription, isEventCanceled } from "./utils";
 
 export function EventList({ events }: EventListProps) {
   return events.map((e, i) => <EventEntry key={i} event={e} />);

@@ -1,5 +1,8 @@
 import React from "react";
 
+import { EventList } from "./event-list";
+import { useCalendarEvents } from "./hooks";
+import { formatEventCountLabel } from "./utils";
 import { Button } from "@/components/ui/button";
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar";
 import {
@@ -12,9 +15,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { EventList } from "./event-list";
-import { useCalendarEvents } from "./hooks";
-import { formatEventCountLabel } from "./utils";
 
 export function PersonalCalendar() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());

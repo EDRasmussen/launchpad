@@ -2,6 +2,9 @@ import { Ellipsis } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import * as React from "react";
 
+import { useDeleteTodoItem, useTodoList } from "./hooks";
+import { TodoForm } from "./todo-form";
+import type { Todo } from "./types";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,12 +39,27 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 
-import { useTodoList } from "./hooks";
-import { TodoForm } from "./todo-form";
 
 export function TodoList() {
-  const [open, setOpen] = React.useState(false);
+  const [createOpen, setCreateOpen] = React.useState(false);
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [editingTodo, setEditingTodo] = React.useState<Todo | null>(null);
   const { data: todoList, isLoading } = useTodoList();
+  const deleteTodo = useDeleteTodoItem();
+
+  const handleEditClick = (todo: Todo) => {
+    setEditingTodo(todo);
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+    setEditingTodo(null);
+  };
+
+  const handleDeleteClick = async (todo: Todo) => {
+    await deleteTodo.mutateAsync({ id: todo.id });
+  };
 
   return (
     <Card>
@@ -49,7 +67,7 @@ export function TodoList() {
         <CardTitle>Task List</CardTitle>
         <CardDescription>Your currently active tasks</CardDescription>
         <CardAction>
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
               <Button variant="outline">Create Task</Button>
             </DialogTrigger>
@@ -60,7 +78,7 @@ export function TodoList() {
                   Create a new task which will appear in the task list
                 </DialogDescription>
               </DialogHeader>
-              <TodoForm onSuccess={() => setOpen(false)} />
+              <TodoForm onSuccess={() => setCreateOpen(false)} />
               <DialogFooter>
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
@@ -96,13 +114,43 @@ export function TodoList() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuLabel>Options</DropdownMenuLabel>
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleEditClick(todo)}>
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={async () => await handleDeleteClick(todo)}
+                    >
+                      Delete
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </ItemActions>
             </Item>
           ))}
+
+        <Dialog open={editOpen} onOpenChange={setEditOpen}>
+          <DialogContent className="sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Edit Task</DialogTitle>
+              <DialogDescription>
+                Update the details of your task
+              </DialogDescription>
+            </DialogHeader>
+            {editingTodo && (
+              <TodoForm todo={editingTodo} onSuccess={handleEditClose} />
+            )}
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline" onClick={handleEditClose}>
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit" form="todo-form">
+                Save changes
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
