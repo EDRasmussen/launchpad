@@ -1,3 +1,11 @@
-# TanStack Start + shadcn/ui
+# LaunchPad
 
-This is a template for a new TanStack Start project with React, TypeScript, and shadcn/ui.
+Personal homepage doubling as a reference project for various functionality.
+
+Built with
+
+- TanStack Start
+- TanStack Query
+- TanStack Forms
+- Drizzle ORM
+- ShadCN UI
