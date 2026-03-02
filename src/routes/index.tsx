@@ -2,13 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { PersonalCalendar } from "@/components/personal-calendar";
 import { TodoList } from "@/components/todo";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 export const Route = createFileRoute("/")({ component: App });
 

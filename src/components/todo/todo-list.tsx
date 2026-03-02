@@ -3,6 +3,10 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useHotkeySequence } from "@tanstack/react-hotkeys";
 import * as React from "react";
 
+import { Kbd, KbdGroup } from "../ui/kbd";
+import { useDeleteTodoItem, useTodoList } from "./hooks";
+import { TodoForm } from "./todo-form";
+import type { Todo } from "./types";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -42,10 +46,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { Kbd, KbdGroup } from "../ui/kbd";
-import { useDeleteTodoItem, useTodoList } from "./hooks";
-import { TodoForm } from "./todo-form";
-import type { Todo } from "./types";
 
 export function TodoList() {
   const [createOpen, setCreateOpen] = React.useState(false);

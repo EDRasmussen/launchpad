@@ -3,6 +3,7 @@ import ICAL from "ical.js";
 
 import { getEnv, requireEnv } from "@/lib/env";
 
+import { getCalendarEventsInput } from "./schema";
 import type { CalendarEvent } from "./types";
 
 async function getCalendarEventsFromURL(
@@ -30,20 +31,21 @@ async function getCalendarEventsFromURL(
   }) as Array<CalendarEvent>;
 }
 
-export const getCalendarEvents = createServerFn({ method: "GET" }).handler(
-  async () => {
+export const getCalendarEvents = createServerFn({ method: "GET" })
+  .inputValidator(getCalendarEventsInput)
+  .handler(async ctx => {
+    const { includePrivate } = getCalendarEventsInput.parse(ctx.data);
     const workIcalUrl = requireEnv("ICAL_URL");
     const personalIcalUrl = getEnv("PERSONAL_ICAL_URL");
 
     const [workEvents, personalEvents] = await Promise.all([
       getCalendarEventsFromURL(workIcalUrl),
-      personalIcalUrl === undefined
-        ? Promise.resolve([])
-        : getCalendarEventsFromURL(personalIcalUrl),
+      includePrivate && personalIcalUrl !== undefined
+        ? getCalendarEventsFromURL(personalIcalUrl)
+        : Promise.resolve([]),
     ]);
 
     return [...workEvents, ...personalEvents].sort(
       (a, b) => a.start.getTime() - b.start.getTime()
     );
-  }
-);
+  });

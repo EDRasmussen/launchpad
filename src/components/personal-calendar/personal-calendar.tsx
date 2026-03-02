@@ -14,11 +14,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 
 export function PersonalCalendar() {
+  const [privateCalendar, setPrivateCalendar] = React.useState(true);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const { data: events, isLoading } = useCalendarEvents();
+  const { data: events, isLoading } = useCalendarEvents(privateCalendar);
 
   const filteredEvents =
     events?.filter(
@@ -31,7 +33,17 @@ export function PersonalCalendar() {
         <CardTitle>Calendar</CardTitle>
         <CardDescription>Today's events</CardDescription>
         <CardAction>
-          <Button variant="outline" size="sm" className="ml-2 text-green-500">
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn(
+              "ml-2 px-2",
+              privateCalendar
+                ? "text-green-500 hover:text-green-500"
+                : "text-red-500 hover:text-red-500"
+            )}
+            onClick={() => setPrivateCalendar(p => !p)}
+          >
             Private
           </Button>
         </CardAction>
