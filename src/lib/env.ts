@@ -5,3 +5,7 @@ export function requireEnv(name: string): string {
   }
   return value;
 }
+
+export function getEnv(name: string): string | undefined {
+  return process.env[name];
+}
