@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import ICAL from "ical.js";
 
-import { getEnv, requireEnv } from "@/lib/env";
 
 import { getCalendarEventsInput } from "./schema";
 import type { CalendarEvent } from "./types";
+import { getEnv, requireEnv } from "@/lib/env";
 
 async function getCalendarEventsFromURL(
   url: string

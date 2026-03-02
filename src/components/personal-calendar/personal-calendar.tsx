@@ -1,3 +1,4 @@
+import { useHotkey } from "@tanstack/react-hotkeys";
 import React from "react";
 
 import { EventList } from "./event-list";
@@ -14,6 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 
@@ -21,6 +28,9 @@ export function PersonalCalendar() {
   const [privateCalendar, setPrivateCalendar] = React.useState(true);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const { data: events, isLoading } = useCalendarEvents(privateCalendar);
+  useHotkey("P", () => {
+    setPrivateCalendar(p => !p);
+  });
 
   const filteredEvents =
     events?.filter(
@@ -33,19 +43,28 @@ export function PersonalCalendar() {
         <CardTitle>Calendar</CardTitle>
         <CardDescription>Today's events</CardDescription>
         <CardAction>
-          <Button
-            variant="outline"
-            size="sm"
-            className={cn(
-              "ml-2 px-2",
-              privateCalendar
-                ? "text-green-500 hover:text-green-500"
-                : "text-red-500 hover:text-red-500"
-            )}
-            onClick={() => setPrivateCalendar(p => !p)}
-          >
-            Private
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "ml-2 px-2",
+                  privateCalendar
+                    ? "text-green-500 hover:text-green-500"
+                    : "text-red-500 hover:text-red-500"
+                )}
+                onClick={() => setPrivateCalendar(p => !p)}
+              >
+                Private
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <KbdGroup>
+                <Kbd>P</Kbd>
+              </KbdGroup>
+            </TooltipContent>
+          </Tooltip>
         </CardAction>
       </CardHeader>
       <CardContent>

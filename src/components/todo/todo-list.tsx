@@ -88,7 +88,6 @@ export function TodoList() {
               <TooltipContent>
                 <KbdGroup>
                   <Kbd>C</Kbd>
-                  <span>+</span>
                   <Kbd>T</Kbd>
                 </KbdGroup>
               </TooltipContent>
