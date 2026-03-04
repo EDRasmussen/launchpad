@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form";
+import { useNavigate } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -8,6 +9,8 @@ import { authClient } from "@/lib/auth-client";
 import { loginSchema } from "./schema";
 
 export function LoginForm() {
+  const navigate = useNavigate();
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -17,15 +20,18 @@ export function LoginForm() {
       onSubmit: loginSchema,
     },
     onSubmit: async ({ value }) => {
-      const { data, error } = await authClient.signIn.email({
+      const { error } = await authClient.signIn.email({
         email: value.email,
         password: value.password,
         rememberMe: true,
       });
 
       if (error) {
-        console.error("Login error:", error);
+        form.setErrorMap({ onSubmit: error.message ?? "Login failed" } as any);
+        return;
       }
+
+      await navigate({ to: "/" });
     },
   });
 
@@ -37,11 +43,10 @@ export function LoginForm() {
       }}
       className="space-y-4"
     >
-      <form.Field
-        name="email"
-        children={field => {
+      <form.Field name="email">
+        {field => {
           const isInvalid =
-            field.state.meta.isTouched && !field.state.meta.isValid;
+            field.state.meta.isTouched && field.state.meta.errors.length > 0;
           return (
             <Field data-invalid={isInvalid}>
               <FieldLabel htmlFor={field.name}>Email</FieldLabel>
@@ -60,12 +65,12 @@ export function LoginForm() {
             </Field>
           );
         }}
-      />
-      <form.Field
-        name="password"
-        children={field => {
+      </form.Field>
+
+      <form.Field name="password">
+        {field => {
           const isInvalid =
-            field.state.meta.isTouched && !field.state.meta.isValid;
+            field.state.meta.isTouched && field.state.meta.errors.length > 0;
           return (
             <Field data-invalid={isInvalid}>
               <FieldLabel htmlFor={field.name}>Password</FieldLabel>
@@ -84,10 +89,23 @@ export function LoginForm() {
             </Field>
           );
         }}
-      />
-      <Button type="submit" className="w-full">
-        Sign In
-      </Button>
+      </form.Field>
+
+      <form.Subscribe selector={state => state.errors}>
+        {errors =>
+          errors.length > 0 && (
+            <p className="text-destructive text-sm">{errors.join(", ")}</p>
+          )
+        }
+      </form.Subscribe>
+
+      <form.Subscribe selector={state => state.isSubmitting}>
+        {isSubmitting => (
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Signing in..." : "Sign In"}
+          </Button>
+        )}
+      </form.Subscribe>
     </form>
   );
 }
