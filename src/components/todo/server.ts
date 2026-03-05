@@ -1,13 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
 
-import { deleteTodoSchema, insertTodoSchema, updateTodoSchema } from "./schema";
 import { db } from "@/db";
 import { todoTable } from "@/db/schema";
+import { ensureSession } from "@/lib/auth.server";
 
+import { deleteTodoSchema, insertTodoSchema, updateTodoSchema } from "./schema";
 
 export const getTodoList = createServerFn({ method: "GET" }).handler(
   async () => {
+    await ensureSession();
     const todos = await db.select().from(todoTable);
     return todos;
   }
@@ -16,29 +18,32 @@ export const getTodoList = createServerFn({ method: "GET" }).handler(
 export const createTodoItem = createServerFn({ method: "POST" })
   .inputValidator(insertTodoSchema)
   .handler(async ctx => {
-    const data = insertTodoSchema.parse(ctx.data);
-    await db.insert(todoTable).values(data);
+    await ensureSession();
+    const parsedData = insertTodoSchema.parse(ctx.data);
+    await db.insert(todoTable).values(parsedData);
     return { success: true };
   });
 
 export const updateTodoItem = createServerFn({ method: "POST" })
   .inputValidator(updateTodoSchema)
   .handler(async ctx => {
-    const data = updateTodoSchema.parse(ctx.data);
+    await ensureSession();
+    const parsedData = updateTodoSchema.parse(ctx.data);
     await db
       .update(todoTable)
       .set({
-        title: data.title,
-        description: data.description,
+        title: parsedData.title,
+        description: parsedData.description,
       })
-      .where(eq(todoTable.id, data.id));
+      .where(eq(todoTable.id, parsedData.id));
     return { success: true };
   });
 
 export const deleteTodoItem = createServerFn({ method: "POST" })
   .inputValidator(deleteTodoSchema)
   .handler(async ctx => {
-    const data = deleteTodoSchema.parse(ctx.data);
-    await db.delete(todoTable).where(eq(todoTable.id, data.id));
+    await ensureSession();
+    const parsedData = deleteTodoSchema.parse(ctx.data);
+    await db.delete(todoTable).where(eq(todoTable.id, parsedData.id));
     return { success: true };
   });

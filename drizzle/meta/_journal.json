@@ -8,6 +8,13 @@
       "when": 1772381239363,
       "tag": "0000_past_cable",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1772481020470,
+      "tag": "0001_sudden_professor_monster",
+      "breakpoints": true
     }
   ]
 }

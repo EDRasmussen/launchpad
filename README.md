@@ -9,3 +9,17 @@ Built with
 - TanStack Forms
 - Drizzle ORM
 - ShadCN UI
+
+## Development
+
+```bash
+bun install
+bunx drizzle-kit migrate
+bun run dev
+```
+
+## Seed the database with:
+
+```bash
+bun run seed
+```

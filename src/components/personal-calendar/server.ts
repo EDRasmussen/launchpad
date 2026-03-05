@@ -1,10 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import ICAL from "ical.js";
 
+import { ensureSession } from "@/lib/auth.server";
+import { getEnv, requireEnv } from "@/lib/env";
 
 import { getCalendarEventsInput } from "./schema";
 import type { CalendarEvent } from "./types";
-import { getEnv, requireEnv } from "@/lib/env";
 
 async function getCalendarEventsFromURL(
   url: string
@@ -34,7 +35,9 @@ async function getCalendarEventsFromURL(
 export const getCalendarEvents = createServerFn({ method: "GET" })
   .inputValidator(getCalendarEventsInput)
   .handler(async ctx => {
-    const { includePrivate } = getCalendarEventsInput.parse(ctx.data);
+    await ensureSession();
+    const { includePrivate } = ctx.data;
+
     const workIcalUrl = requireEnv("ICAL_URL");
     const personalIcalUrl = getEnv("PERSONAL_ICAL_URL");
 
